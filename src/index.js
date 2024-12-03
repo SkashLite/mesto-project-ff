@@ -9,16 +9,26 @@ const plusButton = document.querySelector(".profile__add-button");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupTypeEdit = document.querySelector(".popup_type_edit");
 const profileEditBtn = document.querySelector(".profile__edit-button");
-const formElement = document.querySelector(".popup__form");
+const profileForm = popupTypeEdit.querySelector(".popup__form");
+const popups = document.querySelectorAll(".popup");
 const nameInput = document.querySelector(".popup__input_type_name");
 const jobInput = document.querySelector(".popup__input_type_description");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const newPlace = document.forms["new-place"];
 const popupImg = document.querySelector(".popup_type_image");
+const popupImage = popupImg.querySelector(".popup__image");
+const popupCaption = popupImg.querySelector(".popup__caption");
 
 function addCard(cardElement) {
   placesList.prepend(cardElement);
+}
+
+function handleCardImageClick(link, name) {
+  popupImage.src = link;
+  popupImage.alt = name;
+  popupCaption.textContent = name;
+  openPopup(popupImg);
 }
 
 // Создание начальных карточек
@@ -28,8 +38,7 @@ initialCards.forEach((element) => {
     element,
     deleteCard,
     likeCard,
-    openPopup,
-    popupImg
+    handleCardImageClick
   );
   placesList.append(cardElement);
 });
@@ -46,21 +55,19 @@ profileEditBtn.addEventListener("click", () => {
 });
 
 // Закрытие попапов
-document.addEventListener("click", (evt) => {
-  if (evt.target.classList.contains("popup__close")) {
-    const popupElement = evt.target.closest(".popup");
-    closePopup(popupElement);
-  }
-});
-
-document.addEventListener("click", (evt) => {
-  if (evt.target.classList.contains("popup")) {
-    closePopup(evt.target);
-  }
+popups.forEach((popup) => {
+  popup.addEventListener("click", (evt) => {
+    if (
+      evt.target === evt.currentTarget ||
+      evt.target.classList.contains("popup__close")
+    ) {
+      closePopup(popup);
+    }
+  });
 });
 
 // Обновление профиля
-formElement.addEventListener("submit", (evt) => {
+profileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
   profileTitle.textContent = nameInput.value;
   profileDescription.textContent = jobInput.value;
