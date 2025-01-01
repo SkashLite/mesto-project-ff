@@ -56,7 +56,6 @@ export function likeCard(cardId, likeBtn, cardLikeCounter, userId) {
   if (hasLiked) {
     delLike(cardId)
       .then((data) => {
-        hasLiked = data.likes.some((like) => like._id === userId);
         likeBtn.classList.remove("card__like-button_is-active");
         cardLikeCounter.textContent = data.likes.length;
       })
@@ -66,7 +65,6 @@ export function likeCard(cardId, likeBtn, cardLikeCounter, userId) {
   } else {
     addLike(cardId)
       .then((data) => {
-        hasLiked = data.likes.some((like) => like._id === userId);
         likeBtn.classList.add("card__like-button_is-active");
         cardLikeCounter.textContent = data.likes.length;
       })

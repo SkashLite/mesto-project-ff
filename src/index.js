@@ -66,23 +66,6 @@ function addCard(cardElement) {
   placesList.prepend(cardElement);
 }
 
-// Создание начальных карточек
-getInitialCards().then((data) => {
-  data.forEach((element) => {
-    cardID = element._id;
-    const cardElement = createCard(
-      cardTemplate,
-      element,
-      userID,
-      cardID,
-      deleteCard,
-      likeCard,
-      handleCardImageClick
-    );
-    placesList.append(cardElement);
-  });
-});
-
 // Открытие попапов
 plusButton.addEventListener("click", () => {
   openPopup(popupNewCard);
@@ -130,7 +113,6 @@ profileForm.addEventListener("submit", (evt) => {
     .finally(() => {
       plusButton.textContent = "Сохранить";
     });
-  closePopup(popupTypeEdit);
 });
 
 //Обновление аватарки пользователя
@@ -151,15 +133,30 @@ editAvatarImg.addEventListener("submit", (evt) => {
     });
 });
 
-document.addEventListener(
-  "DOMContentLoaded",
-  getUser().then((data) => {
-    userID = data._id;
-    profileTitle.textContent = data.name;
-    profileDescription.textContent = data.about;
-    profileImg.style.backgroundImage = `url(${data.avatar})`;
+Promise.all([getUser(), getInitialCards()]).then(
+  ([userData, cardsData]) => {
+    userID = userData._id;
+    profileTitle.textContent = userData.name;
+    profileDescription.textContent = userData.about;
+    profileImg.style.backgroundImage = `url(${userData.avatar})`
+
+    cardsData.forEach((element) => {
+      cardID = element._id;
+      const cardElement = createCard(
+        cardTemplate,
+        element,
+        userID,
+        cardID,
+        deleteCard,
+        likeCard,
+        handleCardImageClick
+      );
+      placesList.append(cardElement);
+    });
+  }).catch(() => {
+    alert("Ошибка при загрузке данных");
   })
-);
+
 
 // Добавление новой карточки
 newPlace.addEventListener("submit", (evt) => {
@@ -196,5 +193,7 @@ newPlace.addEventListener("submit", (evt) => {
     })
     .catch((error) => {
       console.log("Ошибка при добавлении карточки:", error);
-    });
+    }).finally(() => {
+      plusButton.textContent = "Сохранить";
+    });;
 });
