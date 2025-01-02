@@ -46,15 +46,6 @@ const validationConfig = {
 
 enableValidation(validationConfig);
 
-document
-  .querySelector(".profile__edit-button")
-  .addEventListener("click", () => {
-    nameInput.value = profileTitle.textContent;
-    jobInput.value = profileDescription.textContent;
-    clearValidation(profileForm, validationConfig);
-    openPopup(popupTypeEdit);
-  });
-
 function handleCardImageClick(link, name) {
   popupImage.src = link;
   popupImage.alt = name;
@@ -74,6 +65,7 @@ plusButton.addEventListener("click", () => {
 profileEditBtn.addEventListener("click", () => {
   nameInput.value = profileTitle.textContent;
   jobInput.value = profileDescription.textContent;
+  clearValidation(profileForm, validationConfig);
   openPopup(popupTypeEdit);
 });
 
@@ -96,10 +88,11 @@ popups.forEach((popup) => {
 // Обновление профиля
 profileForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
+  const submitButton = evt.target.querySelector(validationConfig.submitButtonSelector);
   const name = nameInput.value;
   const about = jobInput.value;
 
-  plusButton.textContent = "Сохранение...";
+  submitButton.textContent = "Сохранение...";
 
   editUser(name, about)
     .then((userData) => {
@@ -111,15 +104,16 @@ profileForm.addEventListener("submit", (evt) => {
       console.error("Ошибка при обновлении профиля:", error);
     })
     .finally(() => {
-      plusButton.textContent = "Сохранить";
+      submitButton.textContent = "Сохранить";
     });
 });
 
 //Обновление аватарки пользователя
 editAvatarImg.addEventListener("submit", (evt) => {
   evt.preventDefault();
-
+  const submitButton = evt.target.querySelector(validationConfig.submitButtonSelector);
   const avatar = avatarInput.value.trim();
+  submitButton.textContent = "Сохранение...";
   editAvatar(avatar)
     .then((data) => {
       profileImg.style.backgroundImage = `url(${data.avatar})`;
@@ -129,7 +123,7 @@ editAvatarImg.addEventListener("submit", (evt) => {
       alert("Ошибка при обновлении аватара. Попробуйте снова.");
     })
     .finally(() => {
-      plusButton.textContent = "Сохранить";
+      submitButton.textContent = "Сохранить";
     });
 });
 
@@ -163,7 +157,8 @@ newPlace.addEventListener("submit", (evt) => {
   evt.preventDefault();
   const name = newPlace.elements["place-name"].value.trim();
   const link = newPlace.elements["link"].value.trim();
-  plusButton.textContent = "Сохранение...";
+  const submitButton = evt.target.querySelector(validationConfig.submitButtonSelector);
+  submitButton.textContent = "Сохранение...";
   postCreateCard(name, link)
     .then((data) => {
       if (!name || !link) return;
@@ -194,6 +189,6 @@ newPlace.addEventListener("submit", (evt) => {
     .catch((error) => {
       console.log("Ошибка при добавлении карточки:", error);
     }).finally(() => {
-      plusButton.textContent = "Сохранить";
+      submitButton.textContent = "Сохранить";
     });;
 });

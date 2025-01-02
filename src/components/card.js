@@ -37,6 +37,7 @@ export function createCard(
   });
 
   likeBtn.addEventListener("click", () => {
+    
     likeCard(cardID, likeBtn, cardLikeCounter, userID);
 
   });
